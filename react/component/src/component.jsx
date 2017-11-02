@@ -33,9 +33,7 @@ export default function createTargetComponent(React, opts) {
       return onComponentMounted(this, this.at, this.logger);
     }
 
-    shouldComponentUpdate() {
-      return false;
-    }
+//    shouldComponentUpdate() { return false;}
 
     componentWillReceiveProps(newProps) {
       return onComponentWillReceiveProps(this, this.at, this.logger, newProps);
