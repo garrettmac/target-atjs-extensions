@@ -23,7 +23,7 @@ export function getParams(props) {
 
   Object.keys(props)
     .filter(k => {
-    return k.indexOf('data-') === 0 && !_.includes(['data-mbox', 'data-timeout'], k);
+    return k.indexOf('data-') === 0 && !_.includes(['data-mbox', 'data-error', 'data-success' , 'data-timeout'], k);
 })
 .forEach((k, i) => {
     if (i === 0) {
@@ -37,6 +37,7 @@ export function getParams(props) {
 export function atOptsHaveChanged(component, mbox, timeout, params) {
   let targetState = component.targetState;
   return !_.isEqual(targetState.atParams, params) ||
-    (mbox && targetState.mbox !== mbox) ||
+    (mbox && targetState.error !== params.error) ||
+    (mbox && targetState.success !== params.success) ||
     (timeout && targetState.timeout !== timeout);
 }
