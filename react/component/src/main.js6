@@ -6,6 +6,7 @@ export function getOffers(component, at, logger) {
     params: component.targetState.atParams,
     timeout: component.targetState.timeout,
     success: function (response) {
+   // callback(response);
       at.applyOffer({
         mbox: component.targetState.mbox,
         offer: response,
@@ -14,6 +15,7 @@ export function getOffers(component, at, logger) {
       component.targetDiv.className = removeMboxClass(component.targetDiv.className);
     },
     error: function (status, error) {
+    //callback(status, error);
       logger.error('getOffer error: ', error, status);
       component.targetDiv.className = removeMboxClass(component.targetDiv.className);
     }
@@ -28,7 +30,9 @@ export function getDefaultProps(opts) {
   return {
     'className': 'mboxDefault',
     'data-mbox': opts.mbox || DEFAULT_MBOX,
-    'data-timeout': opts.timeout || DEFAULT_TIMEOUT
+    'data-timeout': opts.timeout || DEFAULT_TIMEOUT,
+    'data-success': opts.success || function(){},
+    'data-error': opts.error || || function(){}
   };
 }
 
@@ -38,7 +42,9 @@ export function onComponentMounted(component, at, logger) {
   targetState.atParams = getParams(component.props);
   targetState.mbox = component.props['data-mbox'];
   targetState.timeout = parseInt(component.props['data-timeout'], 10);
-
+  targetState.success = component.props['data-success'];
+  targetState.error = component.props['data-error'];
+  
   if (targetState.mbox === 'default-mbox') {
     logger.error('at-react-component:', 'mbox prop must be provided for each Target component!');
     return;
@@ -52,6 +58,8 @@ export function onComponentMounted(component, at, logger) {
 export function onComponentWillReceiveProps(component, at, logger, newProps) {
   let newMbox = newProps['data-mbox'];
   let newTimeout = parseInt(newProps['data-timeout'], 10);
+  let newSuccess = newProps['data-success'];
+  let newError = newProps['data-error'];
   let newParams = getParams(newProps);
 
   if (atOptsHaveChanged(component, newMbox, newTimeout, newParams)) {
@@ -59,6 +67,8 @@ export function onComponentWillReceiveProps(component, at, logger, newProps) {
     targetState.atParams = newParams || targetState.atParams;
     targetState.mbox = newMbox || targetState.mbox;
     targetState.timeout = newTimeout || targetState.timeout;
+    targetState.success = newMbox || targetState.success;
+    targetState.error = newTimeout || targetState.error;
 
     if (!targetState.editMode) {
       getOffers(component, at, logger);
